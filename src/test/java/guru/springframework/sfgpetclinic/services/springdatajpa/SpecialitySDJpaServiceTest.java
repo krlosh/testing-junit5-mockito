@@ -9,6 +9,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class SpecialitySDJpaServiceTest {
@@ -22,10 +26,16 @@ class SpecialitySDJpaServiceTest {
     @Test
     void deleteById() {
         this.service.deleteById(1l);
+        verify(this.repository).deleteById(1l);
+        verify(this.repository, never()).delete(any());
     }
 
     @Test
     void delete() {
-        this.service.delete(new Speciality());
+
+        Speciality objectToDelete = new Speciality();
+        this.service.delete(objectToDelete);
+        verify(this.repository).delete(objectToDelete);
+        verify(this.repository, never()).deleteById(anyLong());
     }
 }
