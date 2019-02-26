@@ -13,6 +13,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,27 +28,38 @@ class SpecialitySDJpaServiceTest {
 
     @Test
     void findByIdTest() {
+        //given
         Speciality speciality = new Speciality();
-        when(this.repository.findById(1L)).thenReturn(Optional.of(speciality));
+        given(this.repository.findById(1L)).willReturn(Optional.of(speciality));
 
+        //when
         Speciality found = this.service.findById(1L);
+
+        //then
         assertNotNull(found);
-        verify(this.repository).findById(1L);
+        then(this.repository).should().findById(1L);
     }
 
     @Test
     void deleteById() {
+        //when
         this.service.deleteById(1l);
-        verify(this.repository).deleteById(1l);
-        verify(this.repository, never()).delete(any());
+
+        //then
+        then(this.repository).should().deleteById(1l);
+        then(this.repository).should(never()).delete(any());
     }
 
     @Test
     void delete() {
-
+        //given
         Speciality objectToDelete = new Speciality();
+
+        //when
         this.service.delete(objectToDelete);
-        verify(this.repository).delete(objectToDelete);
-        verify(this.repository, never()).deleteById(anyLong());
+
+        //then
+        then(this.repository).should().delete(objectToDelete);
+        then(this.repository).should(never()).deleteById(anyLong());
     }
 }
