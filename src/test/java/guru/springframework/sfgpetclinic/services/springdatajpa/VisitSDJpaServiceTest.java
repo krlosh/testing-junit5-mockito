@@ -62,7 +62,7 @@ class VisitSDJpaServiceTest {
         Visit foundVisit = this.service.findById(1L);
 
         //then
-        assertThat(foundVisit).isNotNull():
+        assertThat(foundVisit).isNotNull();
         then(this.repository).should().findById(anyLong());
         then(this.repository).shouldHaveNoMoreInteractions();
 
