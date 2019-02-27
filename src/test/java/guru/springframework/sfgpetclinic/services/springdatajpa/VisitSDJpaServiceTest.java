@@ -33,24 +33,38 @@ class VisitSDJpaServiceTest {
 
     @Test
     void findAllThatNoneIsFound() {
-        when(this.repository.findAll()).thenReturn(new ArrayList<>());
-        assertTrue(this.service.findAll().isEmpty());
-        verify(this.repository).findAll();
+        //given
+        given(this.repository.findAll()).willReturn(new ArrayList<>());
+
+        //when
+        Set<Visit> emptyVisits = this.service.findAll();
+
+        //then
+        assertThat(emptyVisits).isEmpty();
+        then(this.repository).should().findAll();
     }
 
     @Test
     void findAllManyReturns() {
-        when(this.repository.findAll()).thenReturn(List.of(new Visit(), new Visit()));
+        //given
+        given(this.repository.findAll()).willReturn(List.of(new Visit(), new Visit()));
+
+        //when
         Set<Visit> allVisits = this.service.findAll();
-        assertFalse(allVisits.isEmpty());
-        assertEquals(2, allVisits.size());
-        verify(this.repository).findAll();
+
+        //then
+        assertThat(allVisits).hasSize(2);
+        then(this.repository).should().findAll();
     }
 
     @Test
     void findByIdNotFound() {
-        assertNull(this.service.findById(1L));
-        verify(this.repository).findById(1L);
+        //when
+        Visit visit = this.service.findById(1L);
+
+        //then
+        assertThat(visit).isNull();
+        then(this.repository).should().findById(1L);
     }
 
     @Test
@@ -70,28 +84,46 @@ class VisitSDJpaServiceTest {
 
     @Test
     void findByIdFound() {
-        when(this.repository.findById(1L)).thenReturn(Optional.of(new Visit()));
-        assertNotNull(this.service.findById(1L));
-        verify(this.repository).findById(1L);
+        //given
+        given(this.repository.findById(1L)).willReturn(Optional.of(new Visit()));
+
+        //when
+        Visit visit = this.service.findById(1L);
+
+        //then
+        assertThat(visit).isNotNull();
+        then(this.repository).should().findById(1L);
     }
 
     @Test
     void save() {
+        //given
         Visit visitToSave = new Visit();
-        when(this.repository.save(any(Visit.class))).thenReturn(visitToSave);
-        assertNotNull(this.service.save(visitToSave));
-        verify(this.repository).save(any(Visit.class));
+        given(this.repository.save(any(Visit.class))).willReturn(visitToSave);
+
+        //when
+        Visit visit = this.service.save(visitToSave);
+
+        //then
+        assertThat(visit).isNotNull();
+        then(this.repository).should().save(any(Visit.class));
     }
 
     @Test
     void delete() {
+        //when
         this.service.delete(new Visit());
-        verify(this.repository).delete(any(Visit.class));
+
+        //then
+        then(this.repository).should().delete(any(Visit.class));
     }
 
     @Test
     void deleteById() {
+        //when
         this.service.deleteById(1L);
-        verify(this.repository).deleteById(anyLong());
+
+        //then
+        then(this.repository).should().deleteById(anyLong());
     }
 }

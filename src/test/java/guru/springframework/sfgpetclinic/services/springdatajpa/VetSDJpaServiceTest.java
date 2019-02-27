@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,16 +25,24 @@ class VetSDJpaServiceTest {
 
     @Test
     void delete() {
+        //given
         Vet vet = new Vet(1L,"","",null);
+
+        //when
         this.vetService.delete(vet);
-        verify(this.repository).delete(vet);
-        verify(this.repository, never()).deleteById(anyLong());
+
+        //then
+        then(this.repository).should().delete(vet);
+        then(this.repository).should(never()).deleteById(anyLong());
     }
 
     @Test
     void deleteById() {
+        //when
         this.vetService.deleteById(1L);
-        verify(this.repository).deleteById(1L);
-        verify(this.repository, never()).delete(any());
+
+        //then
+        then(this.repository).should().deleteById(1L);
+        then(this.repository).should(never()).delete(any());
     }
 }
