@@ -13,8 +13,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,5 +60,31 @@ class SpecialitySDJpaServiceTest {
         //then
         then(this.repository).should().delete(objectToDelete);
         then(this.repository).should(never()).deleteById(anyLong());
+    }
+
+    @Test
+    void testDoThrow(){
+        doThrow(new RuntimeException("boom")).when(this.repository).delete(any());
+
+        assertThrows(RuntimeException.class, ()-> this.service.delete(new Speciality()) );
+        verify(this.repository).delete(any());
+    }
+
+    @Test
+    void testFindByIdThrows() {
+        given(this.repository.findById(1L)).willThrow(new RuntimeException("boom"));
+
+        assertThrows(RuntimeException.class, ()-> this.service.findById(1L) );
+
+        then(this.repository).should().findById(1L);
+    }
+
+    @Test
+    void testDeleteBDDThrows() {
+        willThrow(new RuntimeException("boom")).given(this.repository).delete(any());
+
+        assertThrows(RuntimeException.class, ()->this.service.delete(new Speciality()));
+
+        then(this.repository).should().delete(any());
     }
 }
