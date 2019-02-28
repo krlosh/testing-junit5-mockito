@@ -39,8 +39,8 @@
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <junit-platform.version>5.3.1</junit-platform.version>
-        <mockito-version>2.23.0</mockito-version>
+        <junit-platform.version>5.3.2</junit-platform.version>
+        <mockito-version>2.23.4</mockito-version>
     </properties>
 
     <dependencies>
