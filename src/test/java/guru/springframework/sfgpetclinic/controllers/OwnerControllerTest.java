@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OwnerControllerTest {
@@ -77,6 +77,7 @@ class OwnerControllerTest {
         //then
         assertThat("%DontFindMe%").isEqualTo(stringArgumentCaptor.getValue());
         assertThat("owners/findOwners").isEqualTo(viewName);
+        verifyZeroInteractions(this.model);
     }
 
     @Test
@@ -91,6 +92,7 @@ class OwnerControllerTest {
         //then
         assertThat("%Buck%").isEqualTo(stringArgumentCaptor.getValue());
         assertThat("redirect:/owners/1").isEqualTo(viewName);
+        verifyZeroInteractions(this.model);
     }
 
     @Test
@@ -107,7 +109,8 @@ class OwnerControllerTest {
         assertThat("%FindMe%").isEqualTo(stringArgumentCaptor.getValue());
         assertThat("owners/ownersList").isEqualTo(viewName);
         inOrder.verify(this.service).findAllByLastNameLike(anyString());
-        inOrder.verify(this.model).addAttribute(anyString(), anyList());
+        inOrder.verify(this.model, times(1)).addAttribute(anyString(), anyList());
+        verifyNoMoreInteractions(this.model);
     }
 
     @Test
