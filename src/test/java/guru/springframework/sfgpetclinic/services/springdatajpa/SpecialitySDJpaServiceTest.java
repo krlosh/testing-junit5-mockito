@@ -46,7 +46,7 @@ class SpecialitySDJpaServiceTest {
         this.service.deleteById(1l);
 
         //then
-        then(this.repository).should().deleteById(1l);
+        then(this.repository).should(timeout(100)).deleteById(1l);
         then(this.repository).should(never()).delete(any());
     }
 
