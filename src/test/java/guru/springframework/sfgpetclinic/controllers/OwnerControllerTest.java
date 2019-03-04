@@ -13,10 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,15 +27,22 @@ class OwnerControllerTest {
     @Mock(lenient = true)
     private OwnerService service;
 
+    @Mock
+    private Model model;
+
+    @Mock
+    private BindingResult result;
+
     @InjectMocks
     private OwnerController controller;
 
-    @Mock BindingResult result;
+
 
     //Instead of annotation you could
     // use ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
     @Captor
     ArgumentCaptor<String> stringArgumentCaptor;
+
 
     @BeforeEach
     void setUp() {
@@ -65,7 +71,8 @@ class OwnerControllerTest {
         Owner owner = new Owner(ID,"Joe","DontFindMe");
 
         //when
-        String viewName = this.controller.processFindForm(owner, result,Mockito.mock(Model.class));
+        model = Mockito.mock(Model.class);
+        String viewName = this.controller.processFindForm(owner, result, model);
 
         //then
         assertThat("%DontFindMe%").isEqualTo(stringArgumentCaptor.getValue());
@@ -79,7 +86,7 @@ class OwnerControllerTest {
         Owner owner = new Owner(ID,"Joe","Buck");
 
         //when
-        String viewName = this.controller.processFindForm(owner, result,Mockito.mock(Model.class));
+        String viewName = this.controller.processFindForm(owner, result,this.model);
 
         //then
         assertThat("%Buck%").isEqualTo(stringArgumentCaptor.getValue());
@@ -91,13 +98,16 @@ class OwnerControllerTest {
         //given
         final long ID = 5L;
         Owner owner = new Owner(ID,"Joe","FindMe");
+        InOrder inOrder = Mockito.inOrder(this.service, this.model);
 
         //when
-        String viewName = this.controller.processFindForm(owner, result,Mockito.mock(Model.class));
+        String viewName = this.controller.processFindForm(owner, result, model);
 
         //then
         assertThat("%FindMe%").isEqualTo(stringArgumentCaptor.getValue());
         assertThat("owners/ownersList").isEqualTo(viewName);
+        inOrder.verify(this.service).findAllByLastNameLike(anyString());
+        inOrder.verify(this.model).addAttribute(anyString(), anyList());
     }
 
     @Test
